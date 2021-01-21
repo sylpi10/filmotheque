@@ -1,11 +1,20 @@
 <template>
   <div class="home">
-      <h1>Filmotheque</h1>
-      <span>{{loading}}</span>
-      <div class="search">
-        <label for="movie-title">Find a Movie</label>
+    <!-- <Header>
+        <template v-slot:page-title>
+              Filmotheque
+          </template>
+    </Header> -->
+    <Skeleton msg="Filmotheque">
+
+    </Skeleton>
+      <span v-if="loading" class="loader">loading movies</span>
+     
+       <div class="search">
+        <label for="movie-title">Find a Movie:</label>
         <input type="search" name="movie-title" v-model="title" id="">
       </div>
+     
       <hr>
       <main class="movies-wrapper">
       <Movie v-for="movie in filteredList" :key="movie.id">
@@ -31,15 +40,17 @@
 // @ is an alias to /src
 import axios from "axios";
 import Movie from "../components/Movie.vue";
+import Skeleton from "../components/Skeleton.vue";
+// import Header from "../components/Header.vue";
 export default {
   name: "Home",
   components: {
-    Movie
+    Movie, Skeleton
   },
   data(){
     return {
       movies: [],
-      loading: '',
+      loading: false,
       title: ''
     };
   },
@@ -48,15 +59,15 @@ export default {
         return this.movies.filter((movie) => {
             return movie.name.toLowerCase().includes(this.title.toLowerCase());
         })
-  },
+    },
   },
   methods: {
     async consumeMovieApi() {
    // GET request using axios with async/await
+      this.loading = true;
       const response = await axios.get("https://movies-api.alexgalinier.now.sh/");
-      this.loading = 'loading movies';
       this.movies = response.data;
-      this.loading = '';
+      this.loading = false;
     }
   },
    beforeMount(){
@@ -73,4 +84,19 @@ export default {
       justify-content: space-around;
       flex-wrap: wrap;
     }
+    .loader{
+      background-color: lightgreen;
+      padding: 4px 16px;
+      text-align: center;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .search{
+      margin: 20px;
+      label{
+        margin-right: 10px;
+      }
+    }
+
 </style>
