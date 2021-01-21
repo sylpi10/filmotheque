@@ -1,50 +1,97 @@
 <template>
    <div class="form">
-       <form action="">
-           <input type="text" name="" id="">
-           <input type="text" name="" id="">
-           <input type="text" name="" id="">
+       <!-- <form action="">
+           <h2>New Movie</h2> 
+           <label for="title">Title</label>
+           <input type="text" name="title" id="">
+           <label for="year">Year</label>
+           <input type="number" name="year" id="">
+           <label for="image">Image link</label>
+           <input type="text" name="image" id="">
            <button>Create</button>
-       </form>
+       </form> -->
+      <div class="">
+           <label for="title">Title:</label>
+            <input
+                type="text"
+                v-model="title"
+                @keyup="$emit('update:title', title);"
+                @keydown="checkTitle"
+                required
+            />
+             <p>{{titleMsg}}</p>
+      </div>
+      <div class="">
+        <label for="year">Year:</label>
+        <input
+            type="number"
+            v-model.number="year"
+            @keyup="$emit('update:year', year);"
+             @keydown="checkYear"
+            required
+        />
+         <p>{{yearMsg}}</p>
+      </div>
+      <div class="">
+        <label for="url">Image link:</label>
+        <input
+            type="text"
+            v-model="url"
+            @keyup="$emit('update:url', url);"
+        />
+      </div>
+       
    </div>
 </template>
 
 <script>
 export default {
     name: "InputWithError",
-      props: {
-         
+        // props: ['name'],
+         props: {
+         title:{
+             type: String,
+             default: ''
+         } ,
+         year: Number,
+         url: String
+      },
+    data() {
+  	    return {
+          titleMsg: '',
+          yearMsg: '',
     }
-  
+    },
+    computed:{
+    internalValue: {
+      get() {return this.title},
+      set(v){ this.$emit("input", v)}
+    }
+    },
+    methods:{
+        checkTitle(){
+        if (this.title.length < 3) {
+            this.titleMsg = "min 4 chars"
+        }else{
+            this.titleMsg = ""
+        }
+    },
+    checkYear(){
+        if(typeof this.year != "number"){
+             this.yearMsg = "Must be a number"
+        }else{
+            this.yearMsg = ""
+        }
+    }
+  }
+
 }
 </script>
 
 <style lang="scss">
-    .form{
-        background-color: rgb(184, 246, 184);
-        width: 50%;
-        margin: auto;
-        border-radius: 20px;
-        padding: 20px;
-        form{
-            display: flex;
-            flex-direction: column;
-            input{
-                margin: 20px;
-            }
-            button{
-                border-radius: 4px;
-                width: 240px;
-                background-color: rgb(64, 64, 206);
-                border: none;
-                padding: 12px;
-                color: #fff;
-                margin:10px auto;
-                cursor: pointer;
-                &:hover{
-                    opacity: .85;
-                }
-            }
-        }
+    p{
+        color: #f00;
     }
 </style>
+
+
