@@ -30,44 +30,27 @@
         />
       </div> -->
 
-    <!-- <input
-      v-bind:value="title"
-      v-on:input="$emit('update:title', $event.target.value)"
-    >
-    <input
-      v-bind:value="year"
-      v-on:input="$emit('update:year', $event.target.value)"
-    >
-    <input
-      v-bind:value="url"
-      v-on:input="$emit('update:url', $event.target.value)"
-    > -->
-   
-    <input
-      v-bind:value="value"
-      v-on:input="$emit('input', $event.target.value)"
-    >
+   <div class="inputs">
+       <label for="value">{{label}}</label>
+        <input 
+         required = true
+         v-bind:value="value"
+         v-on:input="$emit('input', $event.target.value)"
+        >
+        <p>{{msg}}</p>
 
-
+   </div>
 </template>
 
 <script>
 export default {
     name: "InputWithError",
-        props: ['value'],
-    //      props: {
-    //      title:{
-    //          type: String,
-    //          default: ''
-    //      } ,
-    //      year: Number,
-    //      url: String
-    //   },
+        props: ['value', 'label', 'msg', 'success'],
     data() {
   	    return {
-          titleMsg: '',
-          yearMsg: '',
-    }
+            valid: true,
+            message: null,
+        }
     },
     computed:{
     // internalValue: {
@@ -76,22 +59,8 @@ export default {
     // }
     },
     methods:{
-        checkTitle(){
-        if (this.title.length < 3) {
-            this.titleMsg = "Enter minimum 4 characters"
-        }else{
-            this.titleMsg = ""
-        }
-    },
-    checkYear(){
-        if(typeof this.year != "number"){
-             this.yearMsg = "Must be a number"
-        }else{
-            this.yearMsg = ""
-        }
+    
     }
-  }
-
 }
 </script>
 
