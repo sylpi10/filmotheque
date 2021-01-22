@@ -2,7 +2,7 @@
     <div class="skeleton">
      <Header>
      </Header>
-     <h1>{{msg}}</h1>
+     <h1>{{pageTitle}}</h1>
     </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
       Header
     },
     props: {
-       msg: String
+       pageTitle: String
     }
 }
 </script>

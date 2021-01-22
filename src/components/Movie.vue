@@ -1,9 +1,7 @@
 <template>
     <div class="card">
-            <slot name="name">
-            </slot>
-            <slot name="year">
-            </slot>
+            <slot name="name"> </slot>
+            <slot name="year"> </slot>
             <div class="img">
                 <slot name="image"> </slot>
             </div>
@@ -37,7 +35,11 @@ export default {
             padding: 10px;
         }
         .img img{
-            max-height: 320px;
+            // max-height: 320px;
+            height: 240px;
+            box-shadow:3px 3px 3px#ccc, -3px -3px 3px#ccc;
+            border-radius: 6px;
+            margin-bottom: 12px;
         }
     }
 </style>

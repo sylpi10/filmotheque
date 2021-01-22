@@ -1,22 +1,21 @@
 <template>
   <div class="add">
-     <Skeleton msg="Edit A Movie">
+     <Skeleton pageTitle="Edit A Movie">
     </Skeleton>
     <hr>
 
   <div class="form">
     <form action="">
-      
-      <h3>Edit Movie </h3>
-      <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
-        
+      <h3>Edit: <span> {{ movie.name }} </span> </h3>
+      <InputWithError v-model="movie.name" :aria-placeholder="movie.name">
       </InputWithError>
-      <!-- <InputWithError>
-        <custom-input v-model="title"></custom-input>
-        <custom-input v-model="year"></custom-input>
-        <custom-input v-model="url"></custom-input>
-      </InputWithError> -->
-        <button @click.prevent="createMovie()">Create</button>
+      <InputWithError v-model.number="movie.year" :aria-placeholder="movie.year">
+      </InputWithError>
+      <InputWithError v-model="movie.url" :aria-placeholder="movie.url">
+      </InputWithError>
+        <button @click.prevent="editMovie()">Edit</button>
+
+        <p class="success">{{success}}</p>
     </form>
   </div>
 
@@ -24,8 +23,7 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import Movie from "../components/Movie.vue";
+import axios from "axios";
 import Skeleton from "../components/Skeleton.vue";
 import InputWithError from "../components/InputWithError.vue";
 export default {
@@ -36,27 +34,44 @@ export default {
   data(){
     return {
       movies: [],
-      year: 1880,
-      title: '',
-      url: "",
+      success: '',
+      movie: {
+        year: 1880,
+        name: '',
+        url: "",
+        id: 0
+      },
     };
   },
-  computed:{
-    printId() {
-      const id = this.$route.query.id;
-      return id;
-    }
+   created() {
+    this.id = this.$route.params.id;
+    console.log("movie id is" + this.id)
   },
-  methods: {
-    getId(){
-      this.id = this.$route.query.id;
-    }
+    methods: {
+    async getMovie() {
+   // GET request using axios with async/await
+      const response = await axios.get(`https://movies-api.alexgalinier.now.sh`);
+      this.movies = response.data;
+      this.movie = this.movies.find(el => el.id == this.id);
+    },
+    editMovie() {
+      // const putData = { name: this.name, year: this.year, url: this.url};
+      axios
+        .put(`https://movies-api.alexgalinier.now.sh/${this.movie.id}`, this.movie)
+        .then(res => {
+          console.log(res.data);
+          this.name = '';
+          this.year = 1880;
+          this.url = '';
+          this.success = "Movies has been updated !!"
+        });
+      
+    },
   },
-    beforeMount(){
-      this.getId()
+   beforeMount(){
+       this.getMovie()
  },
-
-};
+}
 </script>
 
 <style lang="scss">
@@ -72,6 +87,9 @@ export default {
             input{
                 margin: 20px;
             }
+            h3 span{
+              color: rgb(94, 32, 238);
+            }
             button{
                 border-radius: 4px;
                 width: 240px;
@@ -84,6 +102,9 @@ export default {
                 &:hover{
                     opacity: .85;
                 }
+            }
+            .success{
+              color: green;
             }
         }
     }

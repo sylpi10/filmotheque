@@ -1,16 +1,11 @@
 <template>
   <div class="home">
-    <!-- <Header>
-        <template v-slot:page-title>
-              Filmotheque
-          </template>
-    </Header> -->
-    <Skeleton msg="Filmotheque">
+      <Skeleton pageTitle="Filmotheque">
+      </Skeleton>
 
-    </Skeleton>
       <span v-if="loading" class="loader">loading movies</span>
      
-       <div class="search">
+      <div class="search">
         <label for="movie-title">Find a Movie:</label>
         <input type="search" name="movie-title" v-model="title" id="">
       </div>
@@ -33,11 +28,14 @@
           </template>
            <template v-slot:buttons>
             <div class="btns">
-              <button class="update" @click="toUpdate(movie.id)">Update</button>
-              <button class="delete"
+              <button class="update btn" @click="toUpdate(movie.id)">Update</button>
+              <!-- <router-link :to="{ name: 'Edit', params: { id: movie.id } }" class="update btn">Edit</router-link> -->
+             
+              <button class="delete btn"
                 @click="deleteMovie()"
-              > X </button>
+              > &times; </button>
             </div>
+            
           </template>
       </Movie> 
       </main>
@@ -45,11 +43,10 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import axios from "axios";
 import Movie from "../components/Movie.vue";
 import Skeleton from "../components/Skeleton.vue";
-// import Header from "../components/Header.vue";
+
 export default {
   name: "Home",
   components: {
@@ -60,13 +57,13 @@ export default {
       movies: [],
       loading: false,
       title: '',
-      isEditing: false
+      isEditing: false,
     };
   },
   computed: {
     filteredList(){
         return this.movies.filter((movie) => {
-            return movie.name.toLowerCase().includes(this.title.toLowerCase());
+          return movie.name.toLowerCase().includes(this.title.toLowerCase());
         })
     },
   },
@@ -81,7 +78,6 @@ export default {
      toUpdate(idToUpdate){
       this.isEditing = true;
       this.id = idToUpdate;
-      console.log(this.id)
       this.$router.push(`edit/${this.id}`) 
     },
     deleteMovie(){
@@ -122,17 +118,19 @@ export default {
   display: flex;
   justify-content: space-around;
 }
-.btns button{
+.btns .btn {
   border: none;
   padding: 4px 12px;
   border-radius: 8px;
   cursor: pointer;
+  text-decoration: none;
+  color:#fff;
 }
-.btns button:hover{
+.btns .btn:hover{
   opacity: .7;
 }
 .btns .update{
-  background-color: lightgreen;
+  background-color: rgb(16, 93, 238);
 }
 .btns .delete{
   background-color: red;

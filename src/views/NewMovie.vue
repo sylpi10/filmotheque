@@ -1,6 +1,6 @@
 <template>
   <div class="add">
-     <Skeleton msg="Add A Movie">
+     <Skeleton pageTitle="Add A Movie">
     </Skeleton>
     <hr>
 
@@ -8,8 +8,8 @@
     <form action="" method="post">
       <h3>New Movie</h3>
       <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
-        
       </InputWithError> -->
+
       <InputWithError v-model="name" :label="labelName" :msg="msgName">
       </InputWithError>
       <InputWithError v-model.number="year" :label="labelYear" :msg="msgYear">
@@ -17,6 +17,8 @@
       <InputWithError v-model="url" :label="labelUrl" :msg="msgUrl">
       </InputWithError>
         <button @click.prevent="createMovie()">Create</button>
+
+          <p class="success">{{success}}</p>
     </form>
   </div>
 
@@ -24,9 +26,7 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import axios from "axios";
-// import Movie from "../components/Movie.vue";
 import Skeleton from "../components/Skeleton.vue";
 import InputWithError from "../components/InputWithError.vue";
 export default {
@@ -45,6 +45,7 @@ export default {
         msgName: "",
         msgYear: "",
         msgUrl: "",
+        success: ""
     };
   },
   methods: {
@@ -60,6 +61,7 @@ export default {
           this.name = '';
           this.year = 1880;
           this.url = '';
+          this.success = "Movies has been updated !!"
         });
       }else{
         this.msgName = "Title is required";
@@ -100,5 +102,9 @@ export default {
                 }
             }
         }
+          .success{
+              margin: 20px auto;
+              color: green;
+            }
     }
 </style>
