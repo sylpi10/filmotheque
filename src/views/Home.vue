@@ -1,92 +1,22 @@
 <template>
   <div class="home">
-      <Skeleton pageTitle="Filmotheque">
+      <Skeleton>
       </Skeleton>
-
-      <span v-if="loading" class="loader">loading movies</span>
-     
-      <div class="search">
-        <label for="movie-title">Find a Movie:</label>
-        <input type="search" name="movie-title" v-model="title" id="">
-      </div>
-     
-      <hr>
-      <main class="movies-wrapper">
-      <Movie v-for="movie in filteredList" :key="movie.id">
-           <template v-slot:name>
-            <h1>
-              {{movie.name}}
-            </h1>
-          </template>
-           <template v-slot:year>
-            <h2>
-              {{movie.year}}
-            </h2>
-          </template>
-            <template v-slot:image>
-            <img :src="`${movie.url}`" alt="Movie Poster" width="300">  
-          </template>
-           <template v-slot:buttons>
-            <div class="btns">
-              <button class="update btn" @click="toUpdate(movie.id)">Update</button>
-              <!-- <router-link :to="{ name: 'Edit', params: { id: movie.id } }" class="update btn">Edit</router-link> -->
-             
-              <button class="delete btn"
-                @click="deleteMovie()"
-              > &times; </button>
-            </div>
-            
-          </template>
-      </Movie> 
-      </main>
+    
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import Movie from "../components/Movie.vue";
+// import axios from "axios";
+// import Movie from "../components/Movie.vue";
 import Skeleton from "../components/Skeleton.vue";
 
 export default {
   name: "Home",
   components: {
-    Movie, Skeleton
+     Skeleton
   },
-  data(){
-    return {
-      movies: [],
-      loading: false,
-      title: '',
-      isEditing: false,
-    };
-  },
-  computed: {
-    filteredList(){
-        return this.movies.filter((movie) => {
-          return movie.name.toLowerCase().includes(this.title.toLowerCase());
-        })
-    },
-  },
-  methods: {
-    async consumeMovieApi() {
-   // GET request using axios with async/await
-      this.loading = true;
-      const response = await axios.get("https://movies-api.alexgalinier.now.sh/");
-      this.movies = response.data;
-      this.loading = false;
-    },
-     toUpdate(idToUpdate){
-      this.isEditing = true;
-      this.id = idToUpdate;
-      this.$router.push(`edit/${this.id}`) 
-    },
-    deleteMovie(){
-      alert('todo: delete movie');
-    }
-  },
-   beforeMount(){
-    this.consumeMovieApi()
- },
+
 };
 </script>
 

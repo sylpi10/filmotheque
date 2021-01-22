@@ -1,7 +1,14 @@
 <template>
   <div class="add">
-     <Skeleton pageTitle="Add A Movie">
-    </Skeleton>
+     <!-- <Skeleton pageTitle="Add A Movie">
+    </Skeleton> -->
+    <Header>
+        <template v-slot:pageTitle >
+                <h1 class="title">
+                    {{pageTitle}}
+                </h1>
+        </template>
+    </Header>
     <hr>
 
   <div class="form">
@@ -27,12 +34,12 @@
 
 <script>
 import axios from "axios";
-import Skeleton from "../components/Skeleton.vue";
 import InputWithError from "../components/InputWithError.vue";
+import Header from "../components/Header.vue";
 export default {
   name: "NewMovie",
   components: {
-     Skeleton, InputWithError
+      InputWithError, Header
   },
   data(){
     return {
@@ -45,14 +52,15 @@ export default {
         msgName: "",
         msgYear: "",
         msgUrl: "",
-        success: ""
+        success: "",
+        pageTitle: "Add a Movie"
     };
   },
   methods: {
     createMovie() {
       if (this.name && this.year && this.url) {
-         this.success = true;
-         this.isValid = true;
+        //  this.success = true;
+        //  this.isValid = true;
       const postData = { name: this.name, year: this.year, url: this.url};
       axios
         .post("https://movies-api.alexgalinier.now.sh/", postData)

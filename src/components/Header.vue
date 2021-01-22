@@ -4,11 +4,11 @@
                <ul>
                     <!-- <li> <router-link to="/">Home</router-link></li> -->
                     <!-- <li> <router-link to="/new-movie">Add Movie</router-link></li> -->
-
                     <li> <router-link :to="{name: 'Home'}">Home</router-link></li>
                     <li> <router-link :to="{name: 'NewMovie'}">Add Movie</router-link></li>
                </ul>
            </nav>
+     <slot name="pageTitle" > </slot>
     </header>    
 </template>
 
@@ -20,9 +20,9 @@ export default {
 
 <style lang="scss">
     header{
-        margin-bottom: 80px;
-  
+
         nav{
+            margin-bottom: 80px;
             background-color: #333;
             color: #fff;
             position: fixed;

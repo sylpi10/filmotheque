@@ -1,21 +1,39 @@
 <template>
     <div class="skeleton">
      <Header>
+        <template v-slot:pageTitle >
+                <h1 class="title">
+                    {{pageTitle}}
+                </h1>
+        </template>
      </Header>
-     <h1>{{pageTitle}}</h1>
+      <hr>
+        <Movies>
+        </Movies>    
     </div>
 </template>
 
 <script>
 import Header from "../components/Header.vue";
+import Movies from "../components/Movies.vue";
 export default {
     name: "Skeleton",
      components: {
-      Header
+      Header, Movies
     },
-    props: {
-       pageTitle: String
-    }
+  data(){
+      return{
+          pageTitle: "Home"
+      }
+  }
+
 }
 </script>
+
+
+<style lang="scss">
+    .title{
+        margin-top: 80px;
+    }
+ </style> 
 

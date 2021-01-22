@@ -16,10 +16,7 @@
 export default {
     name: "InputWithError",
         props: ['value', 'label', 'msg', 'success'],
-    data() {
-  	    return {
-        }
-    },
+    
 }
 </script>
 

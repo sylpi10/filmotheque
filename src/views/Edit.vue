@@ -1,7 +1,14 @@
 <template>
   <div class="add">
-     <Skeleton pageTitle="Edit A Movie">
-    </Skeleton>
+     <!-- <Skeleton pageTitle="Edit A Movie">
+    </Skeleton> -->
+    <Header>
+       <template v-slot:pageTitle >
+                <h1 class="title">
+                    {{pageTitle}}
+                </h1>
+        </template>
+    </Header>
     <hr>
 
   <div class="form">
@@ -24,22 +31,24 @@
 
 <script>
 import axios from "axios";
-import Skeleton from "../components/Skeleton.vue";
 import InputWithError from "../components/InputWithError.vue";
+import Header from '../components/Header.vue';
 export default {
   name: "Edit",
   components: {
-     Skeleton, InputWithError
+    InputWithError,
+    Header
   },
   data(){
     return {
       movies: [],
       success: '',
+      pageTitle: "Edit movie",
       movie: {
         year: 1880,
         name: '',
         url: "",
-        id: 0
+        id: 0,
       },
     };
   },

@@ -13,11 +13,7 @@
 
 <script>
 export default {
-    name: "Movie",
-    props: {
-       
-    }
-  
+    name: "Movie"
 }
 </script>
 
