@@ -31,6 +31,14 @@
             <template v-slot:image>
             <img :src="`${movie.url}`" alt="Movie Poster" width="300">  
           </template>
+           <template v-slot:buttons>
+            <div class="btns">
+              <button class="update" @click="toUpdate(movie.id)">Update</button>
+              <button class="delete"
+                @click="deleteMovie()"
+              > X </button>
+            </div>
+          </template>
       </Movie> 
       </main>
   </div>
@@ -51,7 +59,8 @@ export default {
     return {
       movies: [],
       loading: false,
-      title: ''
+      title: '',
+      isEditing: false
     };
   },
   computed: {
@@ -68,6 +77,15 @@ export default {
       const response = await axios.get("https://movies-api.alexgalinier.now.sh/");
       this.movies = response.data;
       this.loading = false;
+    },
+     toUpdate(idToUpdate){
+      this.isEditing = true;
+      this.id = idToUpdate;
+      console.log(this.id)
+      this.$router.push(`edit/${this.id}`) 
+    },
+    deleteMovie(){
+      alert('todo: delete movie');
     }
   },
    beforeMount(){
@@ -98,5 +116,27 @@ export default {
         margin-right: 10px;
       }
     }
+
+.btns{
+  margin: 8px;
+  display: flex;
+  justify-content: space-around;
+}
+.btns button{
+  border: none;
+  padding: 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btns button:hover{
+  opacity: .7;
+}
+.btns .update{
+  background-color: lightgreen;
+}
+.btns .delete{
+  background-color: red;
+  color: #fff;
+}
 
 </style>

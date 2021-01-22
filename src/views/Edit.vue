@@ -1,21 +1,21 @@
 <template>
   <div class="add">
-     <Skeleton msg="Add A Movie">
+     <Skeleton msg="Edit A Movie">
     </Skeleton>
     <hr>
 
   <div class="form">
     <form action="">
-      <h3>New Movie</h3>
-      <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
+      
+      <h3>Edit Movie </h3>
+      <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
         
+      </InputWithError>
+      <!-- <InputWithError>
+        <custom-input v-model="title"></custom-input>
+        <custom-input v-model="year"></custom-input>
+        <custom-input v-model="url"></custom-input>
       </InputWithError> -->
-      <InputWithError v-model="name">
-      </InputWithError>
-      <InputWithError v-model.number="year">
-      </InputWithError>
-      <InputWithError v-model="url">
-      </InputWithError>
         <button @click.prevent="createMovie()">Create</button>
     </form>
   </div>
@@ -25,35 +25,36 @@
 
 <script>
 // @ is an alias to /src
-import axios from "axios";
 // import Movie from "../components/Movie.vue";
 import Skeleton from "../components/Skeleton.vue";
 import InputWithError from "../components/InputWithError.vue";
 export default {
-  name: "NewMovie",
+  name: "Edit",
   components: {
      Skeleton, InputWithError
   },
   data(){
     return {
-        year: 1880,
-        name: '',
-        url: "",
+      movies: [],
+      year: 1880,
+      title: '',
+      url: "",
     };
   },
+  computed:{
+    printId() {
+      const id = this.$route.query.id;
+      return id;
+    }
+  },
   methods: {
-    createMovie() {
-      const postData = { name: this.name, year: this.year, url: this.url};
-      axios
-        .post("https://movies-api.alexgalinier.now.sh/", postData)
-        .then(res => {
-          console.log(res.data);
-          // this.title = '';
-          // this.year = 1880;
-          // this.url = '';
-        });
-    },
-  }
+    getId(){
+      this.id = this.$route.query.id;
+    }
+  },
+    beforeMount(){
+      this.getId()
+ },
 
 };
 </script>
@@ -69,8 +70,7 @@ export default {
             display: flex;
             flex-direction: column;
             input{
-                margin: 20px auto;
-                width: 50%;
+                margin: 20px;
             }
             button{
                 border-radius: 4px;
