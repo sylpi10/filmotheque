@@ -22,13 +22,16 @@
       <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
       </InputWithError> -->
 
-      <InputWithError v-model="movie.name" :label="labelName" :errorMsg="msgName" :keyup="checkform()">
+      <InputWithError v-model="movie.name" :label="labelName" :errorMsg="msgName">
       </InputWithError>
       <InputWithError type="number" v-model.number="movie.year" :label="labelYear" :errorMsg="msgYear">
       </InputWithError>
       <InputWithError v-model="movie.url" :label="labelUrl" :errorMsg="msgUrl">
       </InputWithError>
-        <button v-if="!movie.id" @click.prevent="createMovie()">Create</button>
+        <!-- <button v-if="!movie.id" @click.prevent="createMovie()" 
+        :disabled="isValid" >Create</button>         -->
+        <button v-if="!movie.id" @click.prevent="createMovie()" 
+         >Create</button>        
         <button v-if="movie.id" @click.prevent="editMovie()">Update</button>
 
           <p class="success">{{successMsg}}</p>
@@ -57,6 +60,7 @@ export default {
         msgUrl: "",
         successMsg: "",
         movies: [],
+        isValid: "false",
         // edit
         movie: {
           year: 1900,
@@ -74,7 +78,7 @@ export default {
   },
   methods: {
    async createMovie() {
-     if (await this.checkform()) {
+      if (await this.checkform()) {
         const postData = { name: this.movie.name, year: this.movie.year, url: this.movie.url};
         const response = await axios
           .post("https://movies-api.alexgalinier.now.sh/", postData);
@@ -88,19 +92,12 @@ export default {
               this.$router.push(`/`); 
             }, 1600);
      }
-
-      // }else{
-      //   this.msgName = "Title is required";
-      //   this.msgYear = "Year is required";
-      //   this.msgUrl = "Url is required";
-      // }
     },
     checkform(){
       if (this.movie.name.length < 2) {
         this.msgName = "Title must have 2 chars min";
         return false;
       }else this.msgName = "";
-      
       if (this.movie.year < 1900) {
         this.msgYear = "Year must be higher than 1900";
         return false;
@@ -113,6 +110,8 @@ export default {
         this.msgYear = "Year must a number";
         return false;
       }else this.msgYear = "";
+        
+        this.isValid = true;
         return true;
     },
 
@@ -172,6 +171,10 @@ export default {
                 &:hover{
                     opacity: .85;
                 }
+               &:disabled{
+                 background-color: #aaa;
+                 cursor: auto;
+               } 
             }
               h3 span{
                 color: rgb(94, 32, 238);
