@@ -17,11 +17,11 @@
       <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
       </InputWithError> -->
 
-      <InputWithError v-model="name" :label="labelName" :msg="msgName">
+      <InputWithError v-model="name" :label="labelName" :errorMsg="msgName">
       </InputWithError>
-      <InputWithError v-model.number="year" :label="labelYear" :msg="msgYear">
+      <InputWithError v-model.number="year" :label="labelYear" :errorMsg="msgYear">
       </InputWithError>
-      <InputWithError v-model="url" :label="labelUrl" :msg="msgUrl">
+      <InputWithError v-model="url" :label="labelUrl" :errorMsg="msgUrl">
       </InputWithError>
         <button @click.prevent="createMovie()">Create</button>
 
@@ -53,24 +53,32 @@ export default {
         msgYear: "",
         msgUrl: "",
         success: "",
-        pageTitle: "Add a Movie"
+        pageTitle: "Add a Movie",
+        movies: []
     };
   },
   methods: {
-    createMovie() {
+   async createMovie() {
       if (this.name && this.year && this.url) {
-        //  this.success = true;
-        //  this.isValid = true;
-      const postData = { name: this.name, year: this.year, url: this.url};
-      axios
-        .post("https://movies-api.alexgalinier.now.sh/", postData)
-        .then(res => {
-          console.log(res.data);
-          this.name = '';
-          this.year = 1880;
-          this.url = '';
-          this.success = "Movies has been updated !!"
-        });
+        const postData = { name: this.name, year: this.year, url: this.url};
+        const response = await axios
+          .post("https://movies-api.alexgalinier.now.sh/", postData);
+          // .then(res => {
+          //   console.log(res.data);
+          //   this.name = '';
+          //   this.year = 1880;
+          //   this.url = '';
+          //   this.success = "Movies has been updated !!"
+          // });
+            this.movies = response.data;
+            this.name = '';
+            this.year = 1880;
+            this.url = '';
+            this.success = "Movies has been created !!";
+            setTimeout(() => {
+              this.success = "";
+              this.$router.push(`/`) 
+            }, 1600);
       }else{
         this.msgName = "Title is required";
         this.msgYear = "Year is required";

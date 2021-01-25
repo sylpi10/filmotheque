@@ -1,10 +1,10 @@
 <template>
     <div class="card">
-            <slot name="name"> </slot>
-            <slot name="year"> </slot>
-            <div class="img">
-                <slot name="image"> </slot>
-            </div>
+        <slot name="name"> </slot>
+        <slot name="year"> </slot>
+        <div class="img">
+            <slot name="image"> </slot>
+        </div>
         <div>
             <slot name="buttons"> </slot>
         </div>

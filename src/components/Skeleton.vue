@@ -30,7 +30,6 @@ export default {
 }
 </script>
 
-
 <style lang="scss">
     .title{
         margin-top: 80px;

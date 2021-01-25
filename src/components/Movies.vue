@@ -74,7 +74,7 @@ export default {
       alert('todo: delete movie');
     }
   },
-   beforeMount(){
+   mounted(){
     this.consumeMovieApi()
  },
 }

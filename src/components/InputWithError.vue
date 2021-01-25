@@ -7,7 +7,7 @@
          v-bind:value="value"
          v-on:input="$emit('input', $event.target.value)"
         >
-        <p>{{msg}}</p>
+        <p>{{errorMsg}}</p>
 
    </div>
 </template>
@@ -15,7 +15,7 @@
 <script>
 export default {
     name: "InputWithError",
-        props: ['value', 'label', 'msg', 'success'],
+        props: ['value', 'label', 'errorMsg', 'success'],
     
 }
 </script>

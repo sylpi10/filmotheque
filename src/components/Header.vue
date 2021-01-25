@@ -20,7 +20,6 @@ export default {
 
 <style lang="scss">
     header{
-
         nav{
             margin-bottom: 80px;
             background-color: #333;
@@ -46,7 +45,6 @@ export default {
             li a:hover{
                 color: rgb(248, 108, 15);
             }
-
         }
     }
 </style>
