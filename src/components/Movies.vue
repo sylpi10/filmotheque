@@ -11,7 +11,7 @@
             <Movie v-for="movie in filteredList" :key="movie.id">
                 <template v-slot:name>
                     <h1>
-                    {{movie.name}}
+                    {{movie.name | capitalize}}
                     </h1>
                 </template>
                 <template v-slot:year>
@@ -52,9 +52,16 @@ export default {
       title: '',
     };
   },
+  filters: {
+  capitalize: function (value) {
+    if (!value) return ''
+    value = value.toString()
+    return value.charAt(0).toUpperCase() + value.slice(1)
+  }
+},
   computed: {
     filteredList(){
-        return this.movies.filter((movie) => {
+       return this.movies.filter(movie => {
           return movie.name.toLowerCase().includes(this.title.toLowerCase());
         })
     },
@@ -64,11 +71,12 @@ export default {
    // GET request using axios with async/await
       this.loading = true;
       const response = await axios.get("https://movies-api.alexgalinier.now.sh/");
-      this.movies = response.data;
+      this.movies = response.data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
       this.loading = false;
     },
      toUpdate(idToUpdate){
       this.$router.push(`new-movie/${idToUpdate}`) 
+    //   this.$router.push(`edit/${idToUpdate}`) 
     },
     deleteMovie(){
       alert('todo: delete movie');

@@ -84,7 +84,7 @@ export default {
             this.name = '';
             this.year = 1880;
             this.url = '';
-            this.successMsg = "Movies has been created !!";
+            this.successMsg = "The movie has been successfully created !!";
             setTimeout(() => {
               this.successMsg = "";
               this.$router.push(`/`) 
