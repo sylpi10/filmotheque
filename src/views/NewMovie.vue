@@ -22,7 +22,7 @@
       <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
       </InputWithError> -->
 
-      <InputWithError v-model="movie.name" :label="labelName" :errorMsg="msgName">
+      <InputWithError v-model="movie.name" :label="labelName" :errorMsg="msgName" :keyup="checkform()">
       </InputWithError>
       <InputWithError type="number" v-model.number="movie.year" :label="labelYear" :errorMsg="msgYear">
       </InputWithError>
@@ -49,7 +49,6 @@ export default {
   },
   data(){
     return {
-       
         labelName: "Title: ",
         labelYear: "Year: ",
         labelUrl: "Url: ",
@@ -57,11 +56,10 @@ export default {
         msgYear: "",
         msgUrl: "",
         successMsg: "",
-        pageTitle: "Add a Movie",
         movies: [],
         // edit
         movie: {
-          year: 1880,
+          year: 1900,
           name: '',
           url: "",
           id: 0,
@@ -76,24 +74,46 @@ export default {
   },
   methods: {
    async createMovie() {
-      if (this.movie.name && this.movie.year && this.movie.url) {
+     if (await this.checkform()) {
         const postData = { name: this.movie.name, year: this.movie.year, url: this.movie.url};
         const response = await axios
           .post("https://movies-api.alexgalinier.now.sh/", postData);
             this.movies = response.data;
             this.name = '';
-            this.year = 1880;
+            this.year = 1900;
             this.url = '';
             this.successMsg = "The movie has been successfully created !!";
             setTimeout(() => {
               this.successMsg = "";
-              this.$router.push(`/`) 
+              this.$router.push(`/`); 
             }, 1600);
-      }else{
-        this.msgName = "Title is required";
-        this.msgYear = "Year is required";
-        this.msgUrl = "Url is required";
-      }
+     }
+
+      // }else{
+      //   this.msgName = "Title is required";
+      //   this.msgYear = "Year is required";
+      //   this.msgUrl = "Url is required";
+      // }
+    },
+    checkform(){
+      if (this.movie.name.length < 2) {
+        this.msgName = "Title must have 2 chars min";
+        return false;
+      }else this.msgName = "";
+      
+      if (this.movie.year < 1900) {
+        this.msgYear = "Year must be higher than 1900";
+        return false;
+      } else this.msgYear = "";
+      if (!(this.movie.url.toLowerCase().startsWith("http"))) {
+        this.msgUrl = "Value must be a valid Url"
+        return false;
+      } else this.msgUrl = "";
+      if (typeof(this.movie.year) != "number") {
+        this.msgYear = "Year must a number";
+        return false;
+      }else this.msgYear = "";
+        return true;
     },
 
       // GET request using axios with async/await
@@ -114,7 +134,7 @@ export default {
           this.movie.name = '';
           this.movie.year = 1880;
           this.movie.url = '';
-          this.success = "Movies has been updated !!"
+          this.success = "The movie has been updated !!";
         });
       
     },
@@ -128,7 +148,7 @@ export default {
 
 <style lang="scss">
     .form{
-        background-color: rgb(184, 246, 184);
+        background-color: rgb(202, 246, 202);
         width: 50%;
         margin: auto;
         border-radius: 20px;

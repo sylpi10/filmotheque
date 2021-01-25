@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="">
-            <span v-if="loading" class="loader">loading movies</span>
+            <span v-if="loading" class="loader">Loading movies...</span>
             <div class="search">
                 <label for="movie-title">Find a Movie:</label>
                 <input type="search" name="movie-title" v-model="title" placeholder="Ex:Usual Suspect">
@@ -10,14 +10,10 @@
         <div class="movies-wrapper">
             <Movie v-for="movie in filteredList" :key="movie.id">
                 <template v-slot:name>
-                    <h1>
-                    {{movie.name | capitalize}}
-                    </h1>
+                    <h1>{{movie.name | capitalize}} </h1>
                 </template>
                 <template v-slot:year>
-                    <h2>
-                    {{movie.year}}
-                    </h2>
+                    <h2> {{movie.year}} </h2>
                 </template>
                     <template v-slot:image>
                     <img :src="`${movie.url}`" alt="Movie Poster" width="300">  
@@ -61,6 +57,7 @@ export default {
 },
   computed: {
     filteredList(){
+        // return all movies & filter on search
        return this.movies.filter(movie => {
           return movie.name.toLowerCase().includes(this.title.toLowerCase());
         })
@@ -68,14 +65,15 @@ export default {
   },
   methods: {
     async consumeMovieApi() {
-   // GET request using axios with async/await
+      // GET request using axios with async/await
       this.loading = true;
       const response = await axios.get("https://movies-api.alexgalinier.now.sh/");
-      this.movies = response.data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-      this.loading = false;
+      // sort movies by name
+      this.movies = await response.data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+      this.loading = await false;
     },
-     toUpdate(idToUpdate){
-      this.$router.push(`new-movie/${idToUpdate}`) 
+    toUpdate(idToUpdate){
+       this.$router.push(`edit-movie/${idToUpdate}`) 
     //   this.$router.push(`edit/${idToUpdate}`) 
     },
     deleteMovie(){
@@ -89,24 +87,25 @@ export default {
 </script>
 
 <style lang="scss">
-    .card{
-        width: 340px;
-        margin: 20px;
-        border: solid 1px #ccc;
-        border-radius: 10px;
-        h1{
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            background-color: orange;
-            margin-top: 0;
-            padding: 10px;
-        }
-        .img img{
-            // max-height: 320px;
-            height: 240px;
-            box-shadow:3px 3px 3px#ccc, -3px -3px 3px#ccc;
-            border-radius: 6px;
-            margin-bottom: 12px;
-        }
+    .movies-wrapper{
+      width: 74%;
+      margin: auto;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    .loader{
+      background-color: lightgreen;
+      padding: 4px 16px;
+      text-align: center;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .search{
+      margin: 20px;
+      label{
+        margin-right: 10px;
+      }
     }
 </style>
