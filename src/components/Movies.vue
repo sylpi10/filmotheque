@@ -68,7 +68,7 @@ export default {
       this.loading = false;
     },
      toUpdate(idToUpdate){
-      this.$router.push(`edit/${idToUpdate}`) 
+      this.$router.push(`new-movie/${idToUpdate}`) 
     },
     deleteMovie(){
       alert('todo: delete movie');

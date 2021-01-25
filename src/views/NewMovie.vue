@@ -4,8 +4,11 @@
     </Skeleton> -->
     <Header>
         <template v-slot:pageTitle >
-                <h1 class="title">
-                    {{pageTitle}}
+                <h1 v-if="!movie.id" class="title">
+                    Create a new Movie
+                </h1>
+                <h1 v-if="movie.id" class="title">
+                    Update a Movie
                 </h1>
         </template>
     </Header>
@@ -13,19 +16,22 @@
 
   <div class="form">
     <form action="" method="post">
-      <h3>New Movie</h3>
+
+      <h3 v-if="!movie.id">New Movie</h3>
+      <h3 v-if="movie.id">Edit <span> {{movie.name}} </span> </h3> 
       <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
       </InputWithError> -->
 
-      <InputWithError v-model="name" :label="labelName" :errorMsg="msgName">
+      <InputWithError v-model="movie.name" :label="labelName" :errorMsg="msgName">
       </InputWithError>
-      <InputWithError v-model.number="year" :label="labelYear" :errorMsg="msgYear">
+      <InputWithError type="number" v-model.number="movie.year" :label="labelYear" :errorMsg="msgYear">
       </InputWithError>
-      <InputWithError v-model="url" :label="labelUrl" :errorMsg="msgUrl">
+      <InputWithError v-model="movie.url" :label="labelUrl" :errorMsg="msgUrl">
       </InputWithError>
-        <button @click.prevent="createMovie()">Create</button>
+        <button v-if="!movie.id" @click.prevent="createMovie()">Create</button>
+        <button v-if="movie.id" @click.prevent="editMovie()">Update</button>
 
-          <p class="success">{{success}}</p>
+          <p class="success">{{successMsg}}</p>
     </form>
   </div>
 
@@ -43,40 +49,44 @@ export default {
   },
   data(){
     return {
-        year: 1880,
-        name: '',
-        url: "",
+       
         labelName: "Title: ",
         labelYear: "Year: ",
         labelUrl: "Url: ",
         msgName: "",
         msgYear: "",
         msgUrl: "",
-        success: "",
+        successMsg: "",
         pageTitle: "Add a Movie",
-        movies: []
+        movies: [],
+        // edit
+        movie: {
+          year: 1880,
+          name: '',
+          url: "",
+          id: 0,
+      },
     };
+  },
+    created() {
+        if (this.$route.params.id) {
+          this.movie.id = this.$route.params.id;
+          console.log("movie id is : " + this.movie.id);
+        }
   },
   methods: {
    async createMovie() {
-      if (this.name && this.year && this.url) {
-        const postData = { name: this.name, year: this.year, url: this.url};
+      if (this.movie.name && this.movie.year && this.movie.url) {
+        const postData = { name: this.movie.name, year: this.movie.year, url: this.movie.url};
         const response = await axios
           .post("https://movies-api.alexgalinier.now.sh/", postData);
-          // .then(res => {
-          //   console.log(res.data);
-          //   this.name = '';
-          //   this.year = 1880;
-          //   this.url = '';
-          //   this.success = "Movies has been updated !!"
-          // });
             this.movies = response.data;
             this.name = '';
             this.year = 1880;
             this.url = '';
-            this.success = "Movies has been created !!";
+            this.successMsg = "Movies has been created !!";
             setTimeout(() => {
-              this.success = "";
+              this.successMsg = "";
               this.$router.push(`/`) 
             }, 1600);
       }else{
@@ -85,8 +95,34 @@ export default {
         this.msgUrl = "Url is required";
       }
     },
-   
-  }
+
+      // GET request using axios with async/await
+      async getMovie() {
+        if (this.movie.id) {
+          const response = await axios.get(`https://movies-api.alexgalinier.now.sh`);
+          this.movies = response.data;
+          this.movie = this.movies.find(el => el.id == this.movie.id);
+        }
+    },
+
+      editMovie() {
+      // const putData = { name: this.name, year: this.year, url: this.url};
+      axios
+        .put(`https://movies-api.alexgalinier.now.sh/${this.movie.id}`, this.movie)
+        .then(res => {
+          console.log(res.data);
+          this.movie.name = '';
+          this.movie.year = 1880;
+          this.movie.url = '';
+          this.success = "Movies has been updated !!"
+        });
+      
+    },
+    
+  },
+    beforeMount(){
+       this.getMovie()
+ },
 };
 </script>
 
@@ -116,6 +152,9 @@ export default {
                 &:hover{
                     opacity: .85;
                 }
+            }
+              h3 span{
+                color: rgb(94, 32, 238);
             }
         }
           .success{
