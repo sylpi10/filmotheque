@@ -7,17 +7,16 @@
                 <label for="movie-title">Find a Movie:</label>
                 <input type="search" name="movie-title" v-model="title" placeholder="Ex:Usual Suspect">
               </div>
-                <!-- <select name="Filter" id="" :change="applyFilter()" v-model="selectedFilter"> 
-                  <option >Filter</option>
-                  <option value="byName" >By Name</option>
-                  <option value="byDate">By Date</option>
-                </select> -->
-                <button class="filterBtn" @click="filterByName()">By Name</button>
-                <button class="filterBtn" @click="filterByDate()">By Date</button>
+
+                <button class="filterBtn" :class="{ active: nameActive }"
+                    @click="filterByName()">By Name</button>
+                <button class="filterBtn" :class="{ active: yearActive }" 
+                    @click="filterByDate()">By Date</button>
                 <div class="select">
-                <select name="direction" id="" v-model="direction">
-                  <option selected="selected" value="asc">Asc </option>
-                  <option value="dsc">Dsc</option>
+            
+                <select name="direction" id="" v-model="isAscending" :change=setDirection()>
+                  <option selected="selected" value="true">&#11165; </option>
+                  <option value="false" @click="isAscending = false"> &#11167;</option>
                 </select>
                
                 </div>
@@ -62,7 +61,10 @@ export default {
       movies: [],
       loading: false,
       title: '',
-      direction: 'asc'
+      isAscending: true,
+      byName: true,
+      yearActive:false,
+      nameActive:false
     };
   },
   filters: {
@@ -79,6 +81,10 @@ export default {
           return movie.name.toLowerCase().includes(this.title.toLowerCase());
         })
     },
+    sortedMovies(){
+      const movies = this.movies;
+      return movies.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+    }
   },
   methods: {
     async consumeMovieApi() {
@@ -89,19 +95,31 @@ export default {
       this.movies = await response.data;
       this.loading = await false;
     },
+
     filterByName(){
-      if (this.direction == "asc") {
+      if (this.isAscending) {
         this.movies.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-      }else if (this.direction == "dsc") {
+      }else {
         this.movies.sort((b, a) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
       }
+      this.nameActive = true;
+      this.yearActive = false;
     },
     filterByDate(){
-       if (this.direction == "asc") {
-        this.movies.sort((a, b) => a.year.localeCompare(b.year));
-       } else  if (this.direction == "dsc") {
-         this.movies.sort((b, a) => a.year.localeCompare(b.year));
+      if (this.isAscending) {
+        this.movies.sort((a, b) => a.year > b.year);
+       } else {
+         this.movies.sort((b, a) => a.year > b.year);
        }
+         this.yearActive = true;
+         this.nameActive = false;
+    },
+    setDirection(){
+      if (this.yearActive) {
+        this.filterByDate()
+      }if (this.nameActive){
+        this.filterByName()
+      }
     },
 
     toUpdate(idToUpdate){
@@ -135,10 +153,9 @@ export default {
       color: #fff;
     }
     .search{
-      margin: 20px;
+      margin:20px auto;
       display: flex;
       width: 40%;
-      margin: auto;
       justify-content: space-around;
       align-items: center;
       label{
@@ -146,18 +163,30 @@ export default {
       }
       button{
         border: none;
-        background-color: rgb(16, 93, 238);
+        background-color: rgb(84, 144, 255);
         color: #fff;
         border-radius: 4px;
         cursor: pointer;
         padding:7px 10px;
+        &:hover{
+          opacity: .8;
+        }
       }
+       .active{
+          background-color: rgb(16, 93, 238);
+          box-shadow: 2px 2px 2px #bbb, -2px -2px 2px #bbb;
+        }
+ 
       select{
+        cursor: pointer;
         border: none;
         background-color: lightgreen;
         padding:4px 20px;
         appearance: none; 
         height: 30px;
+        &:hover{
+        background-color: rgb(120, 223, 120);
+        }
       }
 
   }
