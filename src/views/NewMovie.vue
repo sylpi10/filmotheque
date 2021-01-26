@@ -15,23 +15,23 @@
     <hr>
 
   <div class="form">
-    <form action="" method="post">
+    <form action="" method="post" novalidate="novalidate">
 
       <h3 v-if="!movie.id">New Movie</h3>
       <h3 v-if="movie.id">Edit <span> {{movie.name}} </span> </h3> 
       <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
       </InputWithError> -->
 
-      <InputWithError v-model="movie.name" :label="labelName" :errorMsg="msgName">
+      <InputWithError v-model="movie.name" :label="labelName" 
+                      :errorMsg="msgName" @keyup.native="checkTitle()">
       </InputWithError>
-      <InputWithError type="number" v-model.number="movie.year" :label="labelYear" :errorMsg="msgYear">
+      <InputWithError type="number" v-model.number="movie.year" 
+                      :label="labelYear" :errorMsg="msgYear" @keyup.native="checkYear()">
       </InputWithError>
-      <InputWithError v-model="movie.url" :label="labelUrl" :errorMsg="msgUrl">
+      <InputWithError v-model="movie.url" :label="labelUrl" 
+                      :errorMsg="msgUrl" @keyup.native="checkUrl()">
       </InputWithError>
-        <!-- <button v-if="!movie.id" @click.prevent="createMovie()" 
-        :disabled="isValid" >Create</button>         -->
-        <button v-if="!movie.id" @click.prevent="createMovie()" 
-         >Create</button>        
+        <button v-if="!movie.id" @click.prevent="createMovie()" >Create</button>        
         <button v-if="movie.id" @click.prevent="editMovie()">Update</button>
 
           <p class="success">{{successMsg}}</p>
@@ -59,9 +59,8 @@ export default {
         msgYear: "",
         msgUrl: "",
         successMsg: "",
+        isValid: false,
         movies: [],
-        isValid: "false",
-        // edit
         movie: {
           year: 1900,
           name: '',
@@ -79,14 +78,14 @@ export default {
   methods: {
    async createMovie() {
       if (await this.checkform()) {
-        const postData = { name: this.movie.name, year: this.movie.year, url: this.movie.url};
+        const postData = { name: this.movie.name, year: this.movie.year, url: this.movie.url };
         const response = await axios
           .post("https://movies-api.alexgalinier.now.sh/", postData);
-            this.movies = response.data;
+            this.movies = await response.data;
             this.name = '';
             this.year = 1900;
             this.url = '';
-            this.successMsg = "The movie has been successfully created !!";
+            this.successMsg = await "The movie has been successfully created !!";
             setTimeout(() => {
               this.successMsg = "";
               this.$router.push(`/`); 
@@ -98,24 +97,36 @@ export default {
         this.msgName = "Title must have 2 chars min";
         return false;
       }else this.msgName = "";
-      if (this.movie.year < 1900) {
-        this.msgYear = "Year must be higher than 1900";
+      if (this.movie.year < 1900 || typeof(this.movie.year) != "number") {
+        this.msgYear = "Year must be higher than 1900 and must a number";
         return false;
       } else this.msgYear = "";
       if (!(this.movie.url.toLowerCase().startsWith("http"))) {
         this.msgUrl = "Value must be a valid Url"
         return false;
       } else this.msgUrl = "";
-      if (typeof(this.movie.year) != "number") {
-        this.msgYear = "Year must a number";
-        return false;
-      }else this.msgYear = "";
         
-        this.isValid = true;
         return true;
     },
-
-      // GET request using axios with async/await
+    checkTitle() {
+        if (this.movie.name.length < 2) {
+          this.msgName = "Title must have 2 chars min";
+        }else{
+          this.msgName = "";
+        }
+    },
+    checkYear() {
+      if (this.movie.year < 1900 || typeof(this.movie.year) != "number") {
+        this.msgYear = "Year must be higher than 1900 and must a number";
+      } else this.msgYear = "";
+    },
+    checkUrl(){
+       if (!(this.movie.url.toLowerCase().startsWith("http"))) {
+        this.msgUrl = "Value must be a valid Url"
+        return false;
+      } else this.msgUrl = "";
+    },
+     // get all movies and isolate the actual one with id
       async getMovie() {
         if (this.movie.id) {
           const response = await axios.get(`https://movies-api.alexgalinier.now.sh`);
@@ -125,7 +136,7 @@ export default {
     },
 
       editMovie() {
-      // const putData = { name: this.name, year: this.year, url: this.url};
+      //  const putData = { name: this.name, year: this.year, url: this.url};
       axios
         .put(`https://movies-api.alexgalinier.now.sh/${this.movie.id}`, this.movie)
         .then(res => {
