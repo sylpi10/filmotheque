@@ -5,7 +5,7 @@
             <div class="search">
               <div class="">
                 <label for="movie-title">Find a Movie:</label>
-                <input type="search" name="movie-title" v-model="title" placeholder="Ex:Usual Suspect">
+                <input type="search" name="movie-title" v-model="search" placeholder="Ex:Usual Suspect">
               </div>
 
                 <button class="filterBtn" :class="{ active: nameActive }"
@@ -14,16 +14,16 @@
                     @click="filterByDate()">By Date</button>
                 <div class="select">
             
-                <select name="direction" id="" v-model="isAscending" :change=setDirection()>
-                  <option selected="selected" value="true">&#11165; </option>
-                  <option value="false" @click="isAscending = false"> &#11167;</option>
+                <select name="direction" id="" v-model="isAscending" >
+                  <option @click="isAscending = true" value="true"> &#11165; </option>
+                  <option value="false" @click="isAscending = false"> &#11167; </option>
                 </select>
                
                 </div>
             </div>
         </div>
         <div class="movies-wrapper">
-            <Movie v-for="movie in filteredList" :key="movie.id">
+            <Movie v-for="movie in filterMovies" :key="movie.id">
                 <template v-slot:name>
                     <h1>{{movie.name | capitalize}} </h1>
                 </template>
@@ -60,11 +60,10 @@ export default {
     return {
       movies: [],
       loading: false,
-      title: '',
       isAscending: true,
-      byName: true,
       yearActive:false,
-      nameActive:false
+      nameActive:false,
+      search: "",
     };
   },
   filters: {
@@ -75,16 +74,37 @@ export default {
   }
 },
   computed: {
-    filteredList(){
-        // return all movies & filter on search
-       return this.movies.filter(movie => {
-          return movie.name.toLowerCase().includes(this.title.toLowerCase());
-        })
+    // filteredList(){
+    //     // return all movies & filter on search
+    //    return this.movies.filter(movie => {
+    //       return movie.name.toLowerCase().includes(this.title.toLowerCase());
+    //     })
+    // },
+
+    filterMovies: function() {
+     let filtered = this.movies;
+     this.isAscending == this.setDirection();
+      if (this.search) {
+        filtered = this.movies.filter(
+          // m => m.name.toLowerCase().indexOf(this.search) > -1
+          m => m.name.toLowerCase().includes(this.search.toLowerCase())
+        );
+      }
+      // if (this.isAscending) {
+      //     filtered = this.movies.filter(
+      //       m => m.isAscending == this.setDirection()
+      //     );
+      // }
+
+      if (this.yearActive) {
+        filtered == this.filterByDate()
+      }if (this.nameActive){
+        filtered == this.filterByName()
+      }
+      
+      return filtered;
     },
-    sortedMovies(){
-      const movies = this.movies;
-      return movies.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-    }
+
   },
   methods: {
     async consumeMovieApi() {
@@ -114,7 +134,8 @@ export default {
          this.yearActive = true;
          this.nameActive = false;
     },
-    setDirection(){
+   
+   setDirection(){
       if (this.yearActive) {
         this.filterByDate()
       }if (this.nameActive){
@@ -153,11 +174,12 @@ export default {
       color: #fff;
     }
     .search{
-      margin:20px auto;
+      margin:30px auto;
       display: flex;
       width: 40%;
       justify-content: space-around;
       align-items: center;
+      
       label{
         margin-right: 10px;
       }
