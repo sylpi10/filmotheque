@@ -1,6 +1,7 @@
 <template>
     <div class="card">
         <slot name="name"> </slot>
+        <slot name="id"> </slot>
         <slot name="year"> </slot>
         <div class="img">
             <slot name="image"> </slot>
@@ -58,8 +59,43 @@ export default {
          background-color: rgb(16, 93, 238);
     }
     .btns .delete{
-        background-color: red;
+        background-color: darkorange;
+        padding: 0px 10px;
+        border-radius: 50%;
         color: #fff;
+        cursor: pointer;
+        font-size: 1.4rem;
+        &:hover{
+          opacity: .9;
+        }
     }
+   .like-container{
+       input {
+              display: none;
+              &:checked + label i {
+                color: rgb(251, 38, 38);
+                animation: heart 1.3s forwards ease;
+
+                @keyframes heart {
+                  0% {
+                    filter: hue-rotate(0deg);
+                    transform: scale(1);
+                  }
+                  50% {
+                    filter: hue-rotate(-270deg);
+                    transform: scale(1.3);
+                  }
+                  100% {
+                    filter: hue-rotate(0deg);
+                    transform: scale(1);
+                  }
+                }
+              }
+              
+            }
+            label{
+                  cursor: pointer;
+              }
+        }
     }
 </style>

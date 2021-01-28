@@ -8,7 +8,7 @@
                     <li> <router-link :to="{name: 'NewMovie'}">Add Movie</router-link></li>
                </ul>
            </nav>
-     <slot name="pageTitle" > </slot>
+     <slot name="pageTitle" class="title"> </slot>
     </header>    
 </template>
 
@@ -20,8 +20,12 @@ export default {
 
 <style lang="scss">
     header{
+        padding-bottom: 20px;
+        box-shadow: 0 4px 2px -2px #eee;
+        .title{
+            margin-top: 80px;
+        }
         nav{
-            margin-bottom: 80px;
             background-color: #333;
             color: #fff;
             position: fixed;

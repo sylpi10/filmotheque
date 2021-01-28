@@ -4,6 +4,18 @@
   </div>
 </template>
 
+// <script>
+//   import {mapActions} from "vuex";
+
+//   export default{
+//     name: "App",
+
+//     methods: {
+//       ...mapActions(["fetchMovies"]),
+//     }
+//   }
+// </script>
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
