@@ -29,12 +29,9 @@
             </div>
         </div>
         <div class="movies-wrapper">
-            <Movie v-for="movie in filterMovies" :key="movie.id">
+            <Movie v-for="movie in getFilteredMovies(search)" :key="movie.id">
                 <template v-slot:name>
                     <h1>{{movie.name | capitalize}} </h1>
-                </template>
-                <template v-slot:id>
-                    <h3>{{movie.id }} </h3>
                 </template>
                 <template v-slot:year>
                     <h2> {{movie.year}} </h2>
@@ -104,23 +101,23 @@ export default {
     //       return movie.name.toLowerCase().includes(this.title.toLowerCase());
     //     })
     // },
-    ...mapGetters(["getMovies", "getLoader", "getFilteredMovies"]),
-    // ...mapState(["loading"]),
+    ...mapGetters(["getMovies", "getLoader", "getFilteredMovies" ]),
 
-    filterMovies: function() {
-    //  let filtered = this.movies;
-     let filtered = this.getMovies;
-     this.isAscending == this.setDirection();
-      if (this.search) {
-        // filtered = this.movies.filter(
-        filtered = this.getMovies.filter(
-          // m => m.name.toLowerCase().indexOf(this.search) > -1
-          m => m.name.toLowerCase().includes(this.search.toLowerCase())
-        );
-      }
-      return filtered;
-    },
-    getFav(){
+    // filterMovies: function() {
+    // //  let filtered = this.movies;
+    //  let filtered = this.getMovies;
+    //  this.isAscending == this.setDirection();
+    //   if (this.search) {
+    //     // filtered = this.movies.filter(
+    //     filtered = this.getMovies.filter(
+    //       // m => m.name.toLowerCase().indexOf(this.search) > -1
+    //       m => m.name.toLowerCase().includes(this.search.toLowerCase())
+    //     );
+    //   }
+    //   return filtered;
+    // },
+   
+   getFav(){
       if (localStorage.getItem('isFav')) {
       try {
         this.isFav == JSON.parse(localStorage.getItem('isFav'));
@@ -134,10 +131,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["fetchMovies", ]),
+    ...mapMutations([ "setLoader"]),
 
-    ...mapActions(["fetchMovies"]),
-
-    ...mapMutations(["fillMovies", "setLoader"]),
     // async consumeMovieApi() {
     //   // GET request using axios with async/await
 

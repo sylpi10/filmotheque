@@ -22,13 +22,13 @@
       <!-- <InputWithError :title.sync="title" :year.sync="year" :url.sync="url">
       </InputWithError> -->
 
-      <InputWithError v-model="movie.name" :label="labelName" 
+      <InputWithError v-model="movie.name" :label="labelName" id="movieName"
                       :errorMsg="msgName" @keyup.native="checkTitle()">
       </InputWithError>
-      <InputWithError type="number" v-model.number="movie.year" 
+      <InputWithError type="number" v-model.number="movie.year" id="movieYear"
                       :label="labelYear" :errorMsg="msgYear" @keyup.native="checkYear()">
       </InputWithError>
-      <InputWithError v-model="movie.url" :label="labelUrl" 
+      <InputWithError v-model="movie.url" :label="labelUrl" id="movieUrl"
                       :errorMsg="msgUrl" @keyup.native="checkUrl()">
       </InputWithError>
         <button v-if="!movie.id" @click.prevent="createMovie()" >Create</button>        
@@ -42,9 +42,10 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import InputWithError from "../components/InputWithError.vue";
 import Header from "../components/Header.vue";
+import {mapActions, mapGetters} from "vuex";
 export default {
   name: "NewMovie",
   components: {
@@ -69,29 +70,46 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapGetters(["getMovies"])
+  },
     created() {
         if (this.$route.params.id) {
           this.movie.id = this.$route.params.id;
           console.log("movie id is : " + this.movie.id);
         }
+           
   },
   methods: {
-   async createMovie() {
-      if (await this.checkform()) {
-        const postData = { name: this.movie.name, year: this.movie.year, url: this.movie.url };
-        const response = await axios
-          .post("https://movies-api.alexgalinier.now.sh/", postData);
-            this.movies = await response.data;
-            this.name = '';
-            this.year = 1900;
-            this.url = '';
-            this.successMsg = await "The movie has been successfully created !!";
-            setTimeout(() => {
+  //  async createMovie() {
+  //     if (await this.checkform()) {
+  //       const postData = { name: this.movie.name, year: this.movie.year, url: this.movie.url };
+  //       const response = await axios
+  //         .post("https://movies-api.alexgalinier.now.sh/", postData);
+  //           this.movies = await response.data;
+  //           this.name = '';
+  //           this.year = 1900;
+  //           this.url = '';
+  //           this.successMsg = await "The movie has been successfully created !!";
+  //           setTimeout(() => {
+  //             this.successMsg = "";
+  //             this.$router.push(`/`); 
+  //           }, 1600);
+  //    }
+  //   },
+  
+  async createMovie(){
+       if (this.checkform()) {
+          await this.addMovie(this.movie);
+          this.successMsg = "The movie has been successfully created !!";
+          setTimeout(() => {
               this.successMsg = "";
               this.$router.push(`/`); 
-            }, 1600);
-     }
+          }, 1600);
+      }
     },
+     
+     
     checkform(){
       if (this.movie.name.length < 2) {
         this.msgName = "Title must have 2 chars min";
@@ -126,27 +144,23 @@ export default {
         return false;
       } else this.msgUrl = "";
     },
-     // get all movies and isolate the actual one with id
-      async getMovie() {
-        if (this.movie.id) {
-          const response = await axios.get(`https://movies-api.alexgalinier.now.sh`);
-          this.movies = response.data;
-          this.movie = this.movies.find(el => el.id == this.movie.id);
-        }
+     // fetch all movies and isolate the one o update with is id
+    async getMovie() {
+      if (this.movie.id) {
+        this.fetchMovies();
+        this.movie = this.getMovies.find(el => el.id == this.movie.id);
+      }
     },
+    ...mapActions(["addMovie", "fetchMovies", "updateMovie"]),
 
-      editMovie() {
-      //  const putData = { name: this.name, year: this.year, url: this.url};
-      axios
-        .put(`https://movies-api.alexgalinier.now.sh/${this.movie.id}`, this.movie)
-        .then(res => {
-          console.log(res.data);
-          this.movie.name = '';
-          this.movie.year = 1880;
-          this.movie.url = '';
-          this.success = "The movie has been updated !!";
-        });
-      
+     async editMovie() {
+       await this.updateMovie(this.movie);
+       this.successMsg = "The movie has been successfully updated !!";
+       
+       setTimeout(() => {
+          this.successMsg = "";
+          this.$router.push(`/`); 
+       }, 1600);
     },
     
   },

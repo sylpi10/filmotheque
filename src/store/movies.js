@@ -5,7 +5,8 @@ export default ({
   state: () => ({
     movies: [],
     isModalOpened: false,
-    loading: false
+    loading: false,
+   
   }),
   getters: {
     getMovies: (state) => {
@@ -14,12 +15,17 @@ export default ({
     getLoader: (state) => {
       return state.loading;
     },
-    getFavoriteMovies: (state) => {
-      return state.movies.filter((movie) => movie.liked);
+    // getFavoriteMovies: (state) => {
+    //   return state.movies.filter((movie) => movie.liked);
+    // },
+    getFilteredMovies: (state) => (search) => {
+      if (search) {
+        return state.movies.filter(
+            m => m.name.toLowerCase().includes(search.toLowerCase()) 
+        );
+      }
+      return state.movies;
     },
-    getFilteredMovies: (state) => {
-      return state.filtered;
-    }
 
   },
   mutations:{
@@ -29,12 +35,7 @@ export default ({
     setLoader(state, payload){
       state.loading = payload;
     },
-    setFilterMovies(state, payload){
-      state.filtered = payload;
-    }
-    // toggleModal(state){
-    //   state.isModalOpened = !state.isModalOpened;
-    // }
+
   },
   actions: {
     async fetchMovies( context ){
@@ -44,19 +45,24 @@ export default ({
       context.commit('setLoader', false);
       context.commit('fillMovies', movies);
     },
-    filterMovies: (context) => {
-      let filtered = this.getMovies;
-      //  this.isAscending == this.setDirection();
-        if (this.search) {
-          // filtered = this.movies.filter(
-          filtered = this.getMovies.filter(
-            // m => m.name.toLowerCase().indexOf(this.search) > -1
-            m => m.name.toLowerCase().includes(this.search.toLowerCase())
-          );
-        }
-        context.commmit('filterMovies', filtered)
-        // return filtered;
-      },
+    async addMovie(context, movie) {
+      const postData = { name: movie.name, year: movie.year, url: movie.url};
+      await axios
+          .post("https://movies-api.alexgalinier.now.sh/", postData);
+      movie.name = "";
+      movie.year = 1900;
+      movie.url = "";
+
+    },
+    async updateMovie(context, movie) {
+      const postData = { name: movie.name, year: movie.year, url: movie.url};
+      await axios
+          .put("https://movies-api.alexgalinier.now.sh/", postData);
+      movie.name = "";
+      movie.year = 1900;
+      movie.url = "";
+    },
+
   },
   modules: {}
 });
